@@ -1,0 +1,11 @@
+# Append to /etc/caddy/Caddyfile on the Hetzner VPS (5.161.225.157).
+#
+# Serves the static AgentCard landing page over HTTPS.
+# Caddy auto-provisions a Let's Encrypt cert for agentcard.topolift.ai
+# once the DNS A record points at this server.
+
+agentcard.topolift.ai {
+    root * /var/www/agentcard
+    file_server
+    encode gzip
+}

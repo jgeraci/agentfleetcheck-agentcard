@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TopoLift AgentCard — open spec for AI agent discovery</title>
+    <meta name="description" content="An open, vendor-neutral spec for how AI agents describe themselves so they can be found by orchestrators, registries, and other agents. Like robots.txt for the agent web.">
+    <meta property="og:title" content="TopoLift AgentCard">
+    <meta property="og:description" content="An open spec for how AI agents describe themselves so they can be found.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://agentcard.topolift.ai">
+    <link rel="canonical" href="https://agentcard.topolift.ai">
+    <style>
+        :root {
+            --ink: #1a1a1a;
+            --muted: #5a5a5a;
+            --line: #e3e3e3;
+            --accent: #1b4d8f;
+            --code-bg: #f5f5f4;
+            --max: 720px;
+        }
+        * { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--ink);
+            background: #fff;
+            line-height: 1.55;
+            margin: 0;
+            padding: 0;
+            font-size: 17px;
+        }
+        main {
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 56px 24px 96px;
+        }
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            line-height: 1.15;
+            margin: 0 0 12px;
+            letter-spacing: -0.01em;
+        }
+        h1 .accent { color: var(--accent); }
+        .tagline {
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin: 0 0 36px;
+        }
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 40px 0 14px;
+            padding-top: 4px;
+        }
+        p { margin: 0 0 14px; }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(27, 77, 143, 0.3);
+            transition: border-color 120ms ease;
+        }
+        a:hover { border-bottom-color: var(--accent); }
+        code, pre {
+            font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.92em;
+        }
+        code {
+            background: var(--code-bg);
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 16px 18px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.5;
+            margin: 16px 0 18px;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            font-size: 1em;
+        }
+        ul {
+            margin: 0 0 14px;
+            padding-left: 22px;
+        }
+        li { margin-bottom: 6px; }
+        .links-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 8px 0 0;
+        }
+        .links-grid a {
+            display: block;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 14px 16px;
+            border-bottom-width: 1px;
+            color: var(--ink);
+        }
+        .links-grid a:hover {
+            border-color: var(--accent);
+            background: #fafafa;
+        }
+        .links-grid .label {
+            display: block;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+        .links-grid .desc {
+            display: block;
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        @media (max-width: 520px) {
+            .links-grid { grid-template-columns: 1fr; }
+            main { padding: 36px 20px 64px; }
+            h1 { font-size: 1.7rem; }
+        }
+        footer {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        .pill {
+            display: inline-block;
+            padding: 2px 9px;
+            border: 1px solid var(--line);
+            border-radius: 99px;
+            font-size: 0.78em;
+            color: var(--muted);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>TopoLift <span class="accent">AgentCard</span></h1>
+    <p class="tagline">
+        An open, vendor-neutral spec for how AI agents describe themselves so
+        they can be <em>found</em> — by orchestrators, by other agents, by humans.
+        <span class="pill">v0.1.0 draft</span>
+    </p>
+
+    <p>
+        It is to agent discovery what
+        <a href="https://www.robotstxt.org/">robots.txt</a> was to the early web:
+        a tiny, conventional file at a well-known location that lets crawlers
+        and rankers do their job better.
+    </p>
+
+    <h2>What it looks like</h2>
+    <p>
+        Each agent (or its operator) publishes a JSON document at
+        <code>https://your-agent.example.com/.well-known/agents.json</code>.
+        Here's a minimal card:
+    </p>
+
+<pre><code>{
+  "agent_id": "com.example.research-summarizer",
+  "name": "Research Summarizer",
+  "description": "Reads PDFs, plain-text documents, and web pages. Returns concise summaries.",
+  "version": "2.3.1",
+  "card_version": "0.1.0",
+  "url": "https://research-summarizer.example.com/agent",
+  "protocols": ["a2a", "mcp", "http"],
+  "example_queries": [
+    "summarize this PDF",
+    "what's the TL;DR of this paper",
+    "key points from a 60-page report"
+  ],
+  "anti_use_cases": [
+    "Real-time conversation",
+    "Translating documents between languages"
+  ],
+  "capabilities": [
+    {
+      "name": "summarize_document",
+      "description": "Take a document and return a concise summary.",
+      "examples": [{
+        "input": "summarize https://arxiv.org/abs/2024.12345 in 200 words",
+        "output": "This paper introduces a method for ..."
+      }]
+    }
+  ]
+}</code></pre>
+
+    <p>
+        The <code>example_queries</code> and <code>anti_use_cases</code> fields
+        are the discoverability difference: they tell rankers what you actually
+        want to be matched for, and just as importantly, what you don't.
+    </p>
+
+    <h2>Why does this exist</h2>
+    <p>
+        Agents are proliferating faster than registries can hand-curate them.
+        Today most discovery layers fall back to keyword matching over a
+        description string — brittle when one agent says <em>"translate to
+        French"</em> and another says <em>"convert English text to a different
+        natural language."</em>
+    </p>
+    <p>
+        A well-written AgentCard costs an hour to write and pays back every
+        time an orchestrator considers your agent.
+    </p>
+
+    <h2>Compatibility</h2>
+    <p>
+        Compatible with
+        <a href="https://google.github.io/A2A/">Google A2A AgentCard</a>
+        and MCP server descriptors. The required fields are a subset of A2A;
+        the optional discovery fields are additive. An agent can publish a
+        single <code>/.well-known/agents.json</code> that satisfies all three.
+    </p>
+
+    <h2>Read more</h2>
+    <div class="links-grid">
+        <a href="https://github.com/jgeraci/topolift-agentcard/blob/main/SPEC.md">
+            <span class="label">Spec →</span>
+            <span class="desc">The normative specification, RFC-2119 style.</span>
+        </a>
+        <a href="https://github.com/jgeraci/topolift-agentcard/blob/main/best-practices.md">
+            <span class="label">Best practices →</span>
+            <span class="desc">How to write fields that rank well.</span>
+        </a>
+        <a href="https://github.com/jgeraci/topolift-agentcard/blob/main/schema/agent-discovery-card.schema.json">
+            <span class="label">JSON Schema →</span>
+            <span class="desc">Machine-validated card structure (Draft 2020-12).</span>
+        </a>
+        <a href="https://github.com/jgeraci/topolift-agentcard/tree/main/examples">
+            <span class="label">Examples →</span>
+            <span class="desc">Annotated good cards and one anti-pattern card.</span>
+        </a>
+        <a href="https://github.com/jgeraci/topolift-agentcard">
+            <span class="label">GitHub →</span>
+            <span class="desc">Source, changelog, issues, contributions.</span>
+        </a>
+        <a href="https://toporank.topolift.ai">
+            <span class="label">TopoRank →</span>
+            <span class="desc">One ranker that consumes AgentCards.</span>
+        </a>
+    </div>
+
+    <h2>License</h2>
+    <p>
+        Apache 2.0. Use it without us — that's the point.
+    </p>
+
+    <footer>
+        Maintained by Joe Geraci (<a href="https://github.com/jgeraci">@jgeraci</a>)
+        and the <a href="https://topolift.ai">TopoLift</a> team. Feedback,
+        criticisms, and competing implementations all welcome via
+        <a href="https://github.com/jgeraci/topolift-agentcard/issues">GitHub Issues</a>.
+    </footer>
+</main>
+</body>
+</html>
