@@ -1,0 +1,52 @@
+{
+  "_comment_1": "This card validates against the schema but illustrates several anti-patterns. See examples/anti-pattern.md for explanation.",
+  "agent_id": "com.example.everything-bot",
+  "name": "Ultra Smart Everything Bot v2 PRO MAX",
+  "description": "The world's smartest AI assistant powered by next-gen technology. Does everything you need.",
+  "version": "1.0.0",
+  "card_version": "0.1.0",
+  "provider": "example.com",
+  "tags": ["ai", "smart", "advanced", "next-gen", "premium", "professional", "best", "fastest", "powerful"],
+  "example_queries": [
+    "do something",
+    "help me",
+    "I need assistance"
+  ],
+  "capabilities": [
+    {
+      "name": "research",
+      "description": "Research stuff."
+    },
+    {
+      "name": "code",
+      "description": "Code stuff."
+    },
+    {
+      "name": "summarize",
+      "description": "Summarize stuff."
+    },
+    {
+      "name": "translate",
+      "description": "Translate stuff."
+    },
+    {
+      "name": "analyze",
+      "description": "Analyze stuff."
+    },
+    {
+      "name": "generate",
+      "description": "Generate stuff."
+    },
+    {
+      "name": "everything",
+      "description": "Does everything."
+    }
+  ],
+  "keywords": [
+    "ai", "AI", "artificial", "intelligence", "smart", "smarter", "smartest",
+    "fast", "faster", "fastest", "good", "best", "premium", "professional",
+    "advanced", "next-gen", "modern", "cutting-edge", "state-of-the-art",
+    "ml", "machine", "learning", "deep", "neural", "network", "llm",
+    "chat", "chatbot", "assistant", "agent", "automation", "automated"
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jgeraci/topolift-agentcard/schema/agent-discovery-card.schema.json",
+  "title": "TopoLift AgentCard (Agent Discovery Card)",
+  "description": "An AI agent's self-description for discovery rankers, orchestrators, and other agents.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["agent_id", "name", "description", "version", "capabilities"],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "pattern": "^[^\\s]+$",
+      "minLength": 1,
+      "description": "Globally unique identifier. Reverse-DNS or URL-path-like recommended."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Natural-language description. 40-400 chars recommended for embedding-based matchers."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z-.]+)?(?:\\+[0-9A-Za-z-.]+)?$",
+      "description": "SemVer of the agent itself."
+    },
+    "card_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z-.]+)?(?:\\+[0-9A-Za-z-.]+)?$",
+      "description": "SemVer of THIS spec the card targets."
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Capability" }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "protocols": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["a2a", "mcp", "http", "openapi", "grpc"]
+      },
+      "uniqueItems": true
+    },
+    "auth_scheme": {
+      "type": "string",
+      "description": "Examples: none, bearer, oauth2, x402, mtls."
+    },
+    "provider": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "example_queries": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Natural-language queries this agent expects to match. The strongest discoverability signal."
+    },
+    "intended_use_cases": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "anti_use_cases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "What this agent should NOT be matched for. May be used as negative-relevance signal."
+    },
+    "priority_capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Subset of capabilities[*].name considered most representative."
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Additional lexical tokens. Use sparingly; stuffing is discounted."
+    },
+    "depends_on": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "agent_ids of other agents this agent calls."
+    },
+    "vocabulary": {
+      "type": "string",
+      "format": "uri",
+      "description": "Optional URL of a controlled vocabulary the card's tags / capability names draw from."
+    },
+    "latency_class": {
+      "type": "string",
+      "enum": ["realtime", "interactive", "batch"]
+    },
+    "cost_class": {
+      "type": "string",
+      "enum": ["free", "cheap", "moderate", "expensive"]
+    },
+    "availability": {
+      "type": "object",
+      "properties": {
+        "regions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "uptime_sla": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "contact": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "$defs": {
+    "Capability": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable identifier for this capability. lowercase_snake_case recommended."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["input", "output"],
+            "properties": {
+              "input": { "type": "string" },
+              "output": { "type": "string" }
+            }
+          },
+          "description": "Example input/output pairs for this capability. Strongest signal of what it does."
+        },
+        "input_schema": {
+          "type": "object",
+          "description": "Optional JSON Schema describing the input."
+        },
+        "output_schema": {
+          "type": "object",
+          "description": "Optional JSON Schema describing the output."
+        }
+      }
+    }
+  }
+}

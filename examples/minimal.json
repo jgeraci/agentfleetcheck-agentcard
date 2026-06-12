@@ -1,0 +1,13 @@
+{
+  "agent_id": "com.example.minimal",
+  "name": "Minimal Example Agent",
+  "description": "A bare-minimum compliant card. Validates against the schema but won't rank well — most fields are missing.",
+  "version": "1.0.0",
+  "card_version": "0.1.0",
+  "capabilities": [
+    {
+      "name": "echo",
+      "description": "Returns whatever you send it."
+    }
+  ]
+}

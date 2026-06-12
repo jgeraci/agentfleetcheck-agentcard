@@ -1,0 +1,82 @@
+{
+  "agent_id": "com.example.research-summarizer",
+  "name": "Research Summarizer",
+  "description": "Reads PDFs, plain-text documents, and web pages. Returns concise summaries at lengths you specify (e.g., 'in 200 words'). Best for academic papers, long reports, and technical documentation.",
+  "version": "2.3.1",
+  "card_version": "0.1.0",
+  "provider": "example.com",
+  "url": "https://research-summarizer.example.com/agent",
+  "protocols": ["a2a", "mcp", "http"],
+  "auth_scheme": "bearer",
+  "tags": ["research", "document", "summarization"],
+  "example_queries": [
+    "summarize this PDF",
+    "what's the TL;DR of this paper",
+    "I need to understand a long doc fast",
+    "key points from a 60-page report",
+    "summarize https://arxiv.org/abs/2024.12345",
+    "boil this paper down for me",
+    "extract the main findings of a study",
+    "TLDR of an academic paper",
+    "shorten this document to a page",
+    "explain a research paper in plain English"
+  ],
+  "intended_use_cases": [
+    "Academic researchers triaging a large reading list",
+    "Analysts who need a 200-word version of a 50-page report before a meeting",
+    "Engineers reading specs / RFCs and wanting the highlights"
+  ],
+  "anti_use_cases": [
+    "Real-time conversation or chat",
+    "Translating documents between languages",
+    "Generating original research content"
+  ],
+  "priority_capabilities": ["summarize_document", "extract_citations"],
+  "capabilities": [
+    {
+      "name": "summarize_document",
+      "description": "Take a document (PDF URL, text file, or web page URL) and return a concise summary at the specified length.",
+      "tags": ["summarization", "document"],
+      "examples": [
+        {
+          "input": "summarize https://arxiv.org/abs/2024.12345 in 200 words",
+          "output": "This paper introduces a method for ..."
+        },
+        {
+          "input": "give me a one-paragraph summary of the attached PDF",
+          "output": "The document discusses ..."
+        }
+      ]
+    },
+    {
+      "name": "extract_citations",
+      "description": "Pull out the citation list from an academic paper and return structured records (title, authors, year, DOI if present).",
+      "tags": ["document", "citation", "research"],
+      "examples": [
+        {
+          "input": "list all the references in https://arxiv.org/abs/2024.12345",
+          "output": "[{\"title\": \"...\", \"authors\": [\"...\"], \"year\": 2024, \"doi\": \"...\"}]"
+        }
+      ]
+    },
+    {
+      "name": "compare_papers",
+      "description": "Take two or more documents and return their points of agreement and disagreement.",
+      "tags": ["comparison", "research"],
+      "examples": [
+        {
+          "input": "compare https://arxiv.org/abs/x and https://arxiv.org/abs/y on their methodology",
+          "output": "Paper X uses ... while paper Y uses ..."
+        }
+      ]
+    }
+  ],
+  "keywords": ["arXiv", "PubMed", "DOI", "BibTeX", "scholar"],
+  "latency_class": "interactive",
+  "cost_class": "cheap",
+  "availability": {
+    "regions": ["us-east-1", "eu-west-1"],
+    "uptime_sla": 0.995
+  },
+  "contact": "agents@example.com"
+}
