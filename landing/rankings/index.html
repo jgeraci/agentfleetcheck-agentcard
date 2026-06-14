@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live agent rankings · TopoLift AgentCard</title>
+    <meta name="description" content="Query the live TopoRank index of MCP servers from the official Model Context Protocol registry. See how any agent ranks for any task, in real time.">
+    <link rel="canonical" href="https://agentcard.topolift.ai/rankings/">
+    <style>
+        :root {
+            --ink: #1a1a1a;
+            --muted: #5a5a5a;
+            --faint: #888;
+            --line: #e3e3e3;
+            --accent: #1b4d8f;
+            --code-bg: #f5f5f4;
+            --max: 900px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--ink);
+            background: #fff;
+            line-height: 1.55;
+            margin: 0;
+            font-size: 17px;
+        }
+        main {
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 48px 24px 96px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+            letter-spacing: -0.01em;
+        }
+        h1 .accent { color: var(--accent); }
+        .tagline {
+            color: var(--muted);
+            margin: 0 0 28px;
+        }
+        a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(27,77,143,0.3); }
+        a:hover { border-bottom-color: var(--accent); }
+        form {
+            display: flex;
+            gap: 8px;
+            margin: 0 0 12px;
+        }
+        input[type="text"] {
+            flex: 1;
+            font: inherit;
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            outline: none;
+        }
+        input[type="text"]:focus { border-color: var(--accent); }
+        button {
+            font: inherit;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover { background: #154171; }
+        button:disabled { background: var(--faint); cursor: not-allowed; }
+        .controls {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9em;
+            color: var(--muted);
+            margin: 0 0 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .controls label { display: inline-flex; align-items: center; gap: 6px; }
+        .controls select {
+            font: inherit;
+            font-size: 0.95em;
+            padding: 4px 6px;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            background: #fff;
+        }
+        .sample {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 20px;
+        }
+        .sample button {
+            background: #fff;
+            color: var(--accent);
+            border: 1px solid var(--line);
+            padding: 4px 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border-radius: 99px;
+        }
+        .sample button:hover { background: #f5f5f4; }
+        #status {
+            color: var(--muted);
+            font-size: 0.9em;
+            margin: 0 0 20px;
+            min-height: 1.2em;
+        }
+        .result {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin: 10px 0;
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: baseline;
+        }
+        .result-rank {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .result-name { font-weight: 600; }
+        .result-id {
+            color: var(--faint);
+            font-size: 0.85em;
+            font-family: "SF Mono", Consolas, monospace;
+        }
+        .result-score {
+            color: var(--muted);
+            font-size: 0.9em;
+            font-family: "SF Mono", Consolas, monospace;
+        }
+        .result-desc {
+            margin: 8px 0 6px;
+            font-size: 0.95em;
+        }
+        .result-breakdown {
+            font-size: 0.8em;
+            color: var(--muted);
+            font-family: "SF Mono", Consolas, monospace;
+        }
+        .result-url {
+            font-size: 0.82em;
+            color: var(--faint);
+            margin-top: 4px;
+            word-break: break-all;
+        }
+        footer {
+            margin-top: 56px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.88em;
+        }
+        @media (max-width: 520px) {
+            main { padding: 28px 18px 64px; }
+            h1 { font-size: 1.4rem; }
+            form { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Live <span class="accent">agent rankings</span></h1>
+    <p class="tagline">
+        Type a task. We rank every active server in the
+        <a href="https://registry.modelcontextprotocol.io">official MCP registry</a>
+        by predicted fit — in real time, no LLM in the loop.
+    </p>
+
+    <form id="q-form">
+        <input type="text" id="q" placeholder="e.g. summarize a research paper" autofocus>
+        <button type="submit" id="go">Rank →</button>
+    </form>
+
+    <div class="sample">
+        <button data-q="summarize a research paper">summarize a research paper</button>
+        <button data-q="scrape a website and extract structured data">scrape a website</button>
+        <button data-q="run a SQL query against my database">SQL query</button>
+        <button data-q="generate an image from a text prompt">generate an image</button>
+        <button data-q="search for academic citations">academic citations</button>
+        <button data-q="manage my Google Calendar">Google Calendar</button>
+    </div>
+
+    <div class="controls">
+        <label>top
+            <select id="top-k">
+                <option>5</option>
+                <option selected>10</option>
+                <option>20</option>
+                <option>50</option>
+            </select>
+        </label>
+        <label>mode
+            <select id="mode">
+                <option value="pure_relevance" selected>pure_relevance</option>
+                <option value="bridge_aware">bridge_aware</option>
+                <option value="centrality_blend">centrality_blend</option>
+            </select>
+        </label>
+    </div>
+
+    <div id="status"></div>
+    <div id="results"></div>
+
+    <footer>
+        Ranks are computed live by <a href="https://toporank.topolift.ai">TopoRank</a>
+        — a structural relevance engine fusing embedding similarity with personalized
+        PageRank over a capability graph. Cards are ingested from the
+        <a href="https://registry.modelcontextprotocol.io">official MCP registry</a>
+        and refreshed periodically. Want your agent here? Publish an
+        <a href="/">AgentCard</a> at <code>/.well-known/agents.json</code>.
+    </footer>
+</main>
+
+<script>
+const API = "https://toporank.topolift.ai/rank";
+const $ = (s) => document.querySelector(s);
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function runQuery(query) {
+    const top_k = parseInt($("#top-k").value, 10);
+    const mode = $("#mode").value;
+    $("#go").disabled = true;
+    $("#status").textContent = `ranking ${top_k} of ~12k against "${query}"…`;
+    $("#results").innerHTML = "";
+
+    const t0 = performance.now();
+    let data;
+    try {
+        const resp = await fetch(API, {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: JSON.stringify({query, top_k, mode})
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        data = await resp.json();
+    } catch (e) {
+        $("#status").textContent = `error: ${e.message}`;
+        $("#go").disabled = false;
+        return;
+    }
+    const elapsed = (performance.now() - t0).toFixed(0);
+
+    $("#status").innerHTML =
+        `${data.results.length} of ${data.corpus_size} ranked in ${elapsed}ms ` +
+        `<span style="color:#888">(server ${data.elapsed_ms.toFixed(0)}ms, ` +
+        `matcher ${escapeHtml(data.matcher)}, graph ${data.graph_size[0]} nodes / ${data.graph_size[1]} edges)</span>`;
+
+    const rows = data.results.map(r => {
+        const desc = (r.evidence && r.evidence.matched_capabilities && r.evidence.matched_capabilities.length)
+            ? `matched: ${r.evidence.matched_capabilities.slice(0,4).map(escapeHtml).join(", ")}`
+            : "";
+        const url = r.resolution && r.resolution.url ? r.resolution.url : "";
+        return `<div class="result">
+            <div class="result-header">
+                <span><span class="result-rank">${r.rank}.</span>
+                <span class="result-name">${escapeHtml(r.name)}</span>
+                <span class="result-id">${escapeHtml(r.agent_id)}</span></span>
+                <span class="result-score">${r.score.toFixed(4)}</span>
+            </div>
+            <div class="result-breakdown">
+                relevance ${r.breakdown.relevance.toFixed(3)} ·
+                structural ${r.breakdown.structural_ppr.toFixed(3)} ·
+                authority ${r.breakdown.outcome_authority.toFixed(2)}
+            </div>
+            ${desc ? `<div class="result-desc" style="color:#666; font-size:0.85em">${desc}</div>` : ""}
+            ${url ? `<div class="result-url">${escapeHtml(url)}</div>` : ""}
+        </div>`;
+    }).join("");
+    $("#results").innerHTML = rows;
+    $("#go").disabled = false;
+}
+
+$("#q-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = $("#q").value.trim();
+    if (q) runQuery(q);
+});
+
+document.querySelectorAll(".sample button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const q = btn.dataset.q;
+        $("#q").value = q;
+        runQuery(q);
+    });
+});
+</script>
+</body>
+</html>
