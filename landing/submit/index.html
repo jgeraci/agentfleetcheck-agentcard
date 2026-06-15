@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Score your AgentCard · TopoRank</title>
+    <meta name="description" content="Paste your AgentCard JSON and see how it would rank against the live index of MCP servers. Get specific suggestions to lift your discoverability.">
+    <style>
+        :root {
+            --ink: #1a1a1a;
+            --muted: #5a5a5a;
+            --faint: #888;
+            --line: #e3e3e3;
+            --accent: #1b4d8f;
+            --good: #1f7a3e;
+            --warn: #b85c00;
+            --bad: #a52121;
+            --code-bg: #f5f5f4;
+            --max: 920px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--ink);
+            background: #fff;
+            line-height: 1.55;
+            margin: 0;
+            font-size: 17px;
+        }
+        main { max-width: var(--max); margin: 0 auto; padding: 48px 24px 96px; }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+            letter-spacing: -0.01em;
+        }
+        h1 .accent { color: var(--accent); }
+        .tagline { color: var(--muted); margin: 0 0 28px; }
+        h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 32px 0 12px;
+        }
+        a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(27,77,143,0.3); }
+        a:hover { border-bottom-color: var(--accent); }
+        textarea {
+            font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+            width: 100%;
+            min-height: 320px;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            outline: none;
+            resize: vertical;
+        }
+        textarea:focus { border-color: var(--accent); }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            font: inherit;
+            font-weight: 600;
+            padding: 10px 22px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover { background: #154171; }
+        button:disabled { background: var(--faint); cursor: not-allowed; }
+        button.secondary {
+            background: #fff;
+            color: var(--accent);
+            border: 1px solid var(--line);
+            font-weight: 500;
+        }
+        button.secondary:hover { background: #fafafa; border-color: var(--accent); }
+        #status {
+            color: var(--muted);
+            font-size: 0.9em;
+            margin: 0 0 14px;
+            min-height: 1.2em;
+        }
+        #score-summary {
+            display: none;
+            background: #f9faff;
+            border: 1px solid #d9e3f4;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin: 20px 0;
+        }
+        #score-summary.valid { background: #f3faf5; border-color: #c9e7d3; }
+        #score-summary.invalid { background: #fdf3f3; border-color: #ecc6c6; }
+        .pill {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 99px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .pill.good { background: #d6f0de; color: var(--good); }
+        .pill.warn { background: #fbe7cf; color: var(--warn); }
+        .pill.bad  { background: #f4d3d3; color: var(--bad); }
+        .pill.info { background: #e1ecfb; color: var(--accent); }
+        .eval {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin: 10px 0;
+        }
+        .eval-q {
+            font-weight: 600;
+            font-size: 0.98em;
+            margin: 0 0 4px;
+        }
+        .eval-rank {
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        .eval-rank .num {
+            font-weight: 700;
+            color: var(--ink);
+            font-size: 1.05em;
+        }
+        .eval-competitors {
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: var(--muted);
+            font-family: "SF Mono", Consolas, monospace;
+        }
+        .eval-competitors div { padding: 2px 0; }
+        .suggest {
+            border-left: 3px solid var(--accent);
+            padding: 8px 14px;
+            margin: 8px 0;
+            background: #fafbfd;
+            border-radius: 0 6px 6px 0;
+        }
+        .suggest.warning { border-left-color: var(--warn); background: #fdf8f1; }
+        .suggest-field {
+            font-family: "SF Mono", Consolas, monospace;
+            font-size: 0.82em;
+            color: var(--muted);
+        }
+        .schema-errors {
+            background: #fdf3f3;
+            border: 1px solid #ecc6c6;
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin: 12px 0;
+            font-family: "SF Mono", Consolas, monospace;
+            font-size: 0.85em;
+        }
+        .schema-errors .err { margin: 4px 0; }
+        footer {
+            margin-top: 56px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.88em;
+        }
+        @media (max-width: 520px) {
+            main { padding: 28px 18px 64px; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Score your <span class="accent">AgentCard</span></h1>
+    <p class="tagline">
+        Paste a card. See exactly how it would rank for representative queries
+        against the live index of ~12,000 MCP servers, and what to change to lift it.
+    </p>
+
+    <textarea id="card-input" spellcheck="false" placeholder='Paste your AgentCard JSON here, e.g.:
+
+{
+  "agent_id": "com.example.your-agent",
+  "name": "Your Agent",
+  "description": "What it does...",
+  "version": "1.0.0",
+  "url": "https://...",
+  "protocols": ["mcp"],
+  "example_queries": [
+    "natural language query 1",
+    "natural language query 2"
+  ],
+  "capabilities": [
+    {"name": "your_capability", "description": "..."}
+  ]
+}'></textarea>
+
+    <div class="controls">
+        <button id="go">Score it →</button>
+        <button id="example" class="secondary">Load example</button>
+        <button id="clear" class="secondary">Clear</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div id="schema-errors"></div>
+    <div id="score-summary"></div>
+    <div id="evaluations"></div>
+    <div id="suggestions"></div>
+
+    <footer>
+        Stateless — your card is never added to the live index. Read the
+        <a href="/">spec</a> · explore the
+        <a href="/rankings/">live rankings</a> · open issues at
+        <a href="https://github.com/jgeraci/toporank-agentcard">GitHub</a>.
+    </footer>
+</main>
+
+<script>
+const API_BASE = window.__TOPORANK_API_BASE__ || "";
+
+const $ = (s) => document.querySelector(s);
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const EXAMPLE_CARD = {
+    "agent_id": "com.example.research-summarizer",
+    "name": "Research Summarizer",
+    "description": "Reads PDFs, plain-text documents, and web pages. Returns concise summaries at lengths you specify. Best for academic papers, long reports, and technical documentation.",
+    "version": "1.0.0",
+    "url": "https://research-summarizer.example.com/agent",
+    "protocols": ["mcp", "http"],
+    "auth_scheme": "bearer",
+    "example_queries": [
+        "summarize this PDF",
+        "what's the TL;DR of this paper",
+        "I need to understand a long doc fast",
+        "key points from a 60-page report",
+        "extract main findings of a study"
+    ],
+    "intended_use_cases": [
+        "Researchers triaging a large reading list"
+    ],
+    "anti_use_cases": [
+        "Real-time conversation or chat",
+        "Translating documents between languages"
+    ],
+    "capabilities": [
+        {"name": "summarize_document", "description": "Take a document and return a concise summary."},
+        {"name": "extract_citations", "description": "Pull the citation list from an academic paper."}
+    ],
+    "priority_capabilities": ["summarize_document"]
+};
+
+$("#example").addEventListener("click", () => {
+    $("#card-input").value = JSON.stringify(EXAMPLE_CARD, null, 2);
+    clearResults();
+});
+
+$("#clear").addEventListener("click", () => {
+    $("#card-input").value = "";
+    clearResults();
+});
+
+function clearResults() {
+    $("#status").textContent = "";
+    $("#schema-errors").innerHTML = "";
+    $("#score-summary").style.display = "none";
+    $("#evaluations").innerHTML = "";
+    $("#suggestions").innerHTML = "";
+}
+
+$("#go").addEventListener("click", async () => {
+    clearResults();
+    const text = $("#card-input").value.trim();
+    if (!text) {
+        $("#status").textContent = "paste a card first";
+        return;
+    }
+    let card;
+    try {
+        card = JSON.parse(text);
+    } catch (e) {
+        $("#schema-errors").innerHTML = `<div class="schema-errors"><div class="err">invalid JSON: ${escapeHtml(e.message)}</div></div>`;
+        return;
+    }
+
+    $("#go").disabled = true;
+    $("#status").textContent = "scoring against ~12k MCP servers…";
+
+    let data;
+    try {
+        const resp = await fetch(`${API_BASE}/score`, {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: JSON.stringify({card})
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        data = await resp.json();
+    } catch (e) {
+        $("#status").textContent = `error: ${e.message}`;
+        $("#go").disabled = false;
+        return;
+    }
+    $("#status").textContent = "";
+    $("#go").disabled = false;
+
+    renderResults(data);
+});
+
+function renderResults(d) {
+    if (!d.valid) {
+        const errs = d.schema_errors.map(e => `
+            <div class="err"><b>${escapeHtml(e.loc.join("."))}</b>: ${escapeHtml(e.msg)} <span style="opacity:0.6">(${escapeHtml(e.type)})</span></div>
+        `).join("");
+        $("#schema-errors").innerHTML = `
+            <div class="schema-errors">
+                <div style="font-weight:600;margin-bottom:6px">Card failed schema validation:</div>
+                ${errs}
+            </div>`;
+        return;
+    }
+
+    // Summary banner
+    const evals = d.evaluations || [];
+    const avgPercentile = evals.length
+        ? evals.reduce((a, e) => a + e.percentile, 0) / evals.length
+        : 0;
+    let band, label;
+    if (avgPercentile >= 95) { band = "good"; label = "Excellent discoverability"; }
+    else if (avgPercentile >= 75) { band = "good"; label = "Strong discoverability"; }
+    else if (avgPercentile >= 50) { band = "warn"; label = "Mediocre discoverability — room to improve"; }
+    else { band = "bad"; label = "Weak discoverability — see suggestions"; }
+
+    $("#score-summary").className = "valid";
+    $("#score-summary").style.display = "block";
+    $("#score-summary").innerHTML = `
+        <span class="pill ${band}">${label}</span>
+        <span style="margin-left:10px;color:#5a5a5a">
+            ${escapeHtml(d.name || d.agent_id)} ·
+            avg percentile ${avgPercentile.toFixed(1)}
+            across ${evals.length} ${evals.length === 1 ? "query" : "queries"} ·
+            corpus ${d.corpus_size.toLocaleString()}
+        </span>`;
+
+    // Per-query evaluations
+    $("#evaluations").innerHTML = `
+        <h2>Per-query rankings</h2>
+        ${evals.map(e => {
+            const rankBand = e.percentile >= 95 ? "good" : e.percentile >= 50 ? "warn" : "bad";
+            const competitors = e.top_competitors.slice(0, 3).map((c, i) =>
+                `<div>${i + 1}. ${escapeHtml(c.name)} <span style="opacity:0.6">(${c.score.toFixed(3)})</span></div>`
+            ).join("");
+            return `
+                <div class="eval">
+                    <div class="eval-q">"${escapeHtml(e.query)}"</div>
+                    <div class="eval-rank">
+                        <span class="pill ${rankBand}" style="margin-right:8px">${e.percentile.toFixed(1)}%ile</span>
+                        would rank <span class="num">${e.would_rank.toLocaleString()}</span>
+                        of ${e.out_of.toLocaleString()} ·
+                        your score ${e.your_score.toFixed(3)}
+                    </div>
+                    <div class="eval-competitors">
+                        <div style="opacity:0.7;margin-bottom:4px">top of leaderboard for this query:</div>
+                        ${competitors}
+                    </div>
+                </div>`;
+        }).join("")}
+    `;
+
+    // Suggestions
+    const sugs = d.suggestions || [];
+    if (sugs.length) {
+        $("#suggestions").innerHTML = `
+            <h2>Suggestions to lift the rank</h2>
+            ${sugs.map(s => `
+                <div class="suggest ${s.severity}">
+                    <span class="suggest-field">${escapeHtml(s.field)}</span>
+                    <span class="pill ${s.severity === "warning" ? "warn" : "info"}" style="margin:0 6px">${s.severity}</span>
+                    ${escapeHtml(s.message)}
+                </div>
+            `).join("")}
+        `;
+    } else {
+        $("#suggestions").innerHTML = `
+            <h2>Suggestions</h2>
+            <div class="suggest">Nothing to flag — your card looks well-formed.</div>
+        `;
+    }
+}
+</script>
+</body>
+</html>

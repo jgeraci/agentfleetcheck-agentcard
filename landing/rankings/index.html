@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Live agent rankings · TopoLift AgentCard</title>
+    <title>Live agent rankings · TopoRank AgentCard</title>
     <meta name="description" content="Query the live TopoRank index of MCP servers from the official Model Context Protocol registry. See how any agent ranks for any task, in real time.">
-    <link rel="canonical" href="https://agentcard.topolift.ai/rankings/">
+    <link rel="canonical" href="https://jgeraci.github.io/toporank-agentcard/rankings/">
     <style>
         :root {
             --ink: #1a1a1a;
@@ -210,7 +210,7 @@
     <div id="results"></div>
 
     <footer>
-        Ranks are computed live by <a href="https://toporank.topolift.ai">TopoRank</a>
+        Ranks are computed live by <a href="https://github.com/jgeraci/toporank-agentcard">TopoRank</a>
         — a structural relevance engine fusing embedding similarity with personalized
         PageRank over a capability graph. Cards are ingested from the
         <a href="https://registry.modelcontextprotocol.io">official MCP registry</a>
@@ -220,7 +220,7 @@
 </main>
 
 <script>
-const API = "https://toporank.topolift.ai/rank";
+const API = ""; // TopoRank engine offline/private during pivot � set when redeployed under its own domain
 const $ = (s) => document.querySelector(s);
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g,
     c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -254,15 +254,16 @@ async function runQuery(query) {
         `<span style="color:#888">(server ${data.elapsed_ms.toFixed(0)}ms, ` +
         `matcher ${escapeHtml(data.matcher)}, graph ${data.graph_size[0]} nodes / ${data.graph_size[1]} edges)</span>`;
 
-    const rows = data.results.map(r => {
+    const rows = data.results.map((r, i) => {
         const desc = (r.evidence && r.evidence.matched_capabilities && r.evidence.matched_capabilities.length)
             ? `matched: ${r.evidence.matched_capabilities.slice(0,4).map(escapeHtml).join(", ")}`
             : "";
         const url = r.resolution && r.resolution.url ? r.resolution.url : "";
+        const name = r.name || r.agent_id;
         return `<div class="result">
             <div class="result-header">
-                <span><span class="result-rank">${r.rank}.</span>
-                <span class="result-name">${escapeHtml(r.name)}</span>
+                <span><span class="result-rank">${i + 1}.</span>
+                <span class="result-name">${escapeHtml(name)}</span>
                 <span class="result-id">${escapeHtml(r.agent_id)}</span></span>
                 <span class="result-score">${r.score.toFixed(4)}</span>
             </div>
