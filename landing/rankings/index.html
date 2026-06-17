@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Live agent rankings Â· TopoRank AgentCard</title>
-    <meta name="description" content="Query the live TopoRank index of MCP servers from the official Model Context Protocol registry. See how any agent ranks for any task, in real time.">
-    <link rel="canonical" href="https://jgeraci.github.io/toporank-agentcard/rankings/">
+    <title>Live agent rankings Â· AgentFleetCheck AgentCard</title>
+    <meta name="description" content="Query the live AgentFleetCheck index of MCP servers from the official Model Context Protocol registry. See how any agent ranks for any task, in real time.">
+    <link rel="canonical" href="https://jgeraci.github.io/agentfleetcheck-agentcard/rankings/">
     <style>
         :root {
             --ink: #1a1a1a;
@@ -210,7 +210,7 @@
     <div id="results"></div>
 
     <footer>
-        Ranks are computed live by <a href="https://github.com/jgeraci/toporank-agentcard">TopoRank</a>
+        Ranks are computed live by <a href="https://github.com/jgeraci/agentfleetcheck-agentcard">AgentFleetCheck</a>
         â€” a structural relevance engine fusing embedding similarity with personalized
         PageRank over a capability graph. Cards are ingested from the
         <a href="https://registry.modelcontextprotocol.io">official MCP registry</a>
@@ -220,7 +220,7 @@
 </main>
 
 <script>
-const API = ""; // TopoRank engine offline/private during pivot — set when redeployed under its own domain
+const API = ""; // AgentFleetCheck engine offline/private during pivot — set when redeployed under its own domain
 const $ = (s) => document.querySelector(s);
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g,
     c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

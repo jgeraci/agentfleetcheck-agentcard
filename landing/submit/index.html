@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Score your AgentCard · TopoRank</title>
+    <title>Score your AgentCard · AgentFleetCheck</title>
     <meta name="description" content="Paste your AgentCard JSON and see how it would rank against the live index of MCP servers. Get specific suggestions to lift your discoverability.">
     <style>
         :root {
@@ -215,12 +215,12 @@
         Stateless — your card is never added to the live index. Read the
         <a href="/">spec</a> · explore the
         <a href="/rankings/">live rankings</a> · open issues at
-        <a href="https://github.com/jgeraci/toporank-agentcard">GitHub</a>.
+        <a href="https://github.com/jgeraci/agentfleetcheck-agentcard">GitHub</a>.
     </footer>
 </main>
 
 <script>
-const API_BASE = window.__TOPORANK_API_BASE__ || "";
+const API_BASE = window.__AGENTFLEETCHECK_API_BASE__ || "";
 
 const $ = (s) => document.querySelector(s);
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g,

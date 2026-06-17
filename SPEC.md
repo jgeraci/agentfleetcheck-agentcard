@@ -1,11 +1,11 @@
-# TopoRank AgentCard Specification
+# AgentFleetCheck AgentCard Specification
 
 **Version:** 0.1.0 (2026-06-12)
 **Status:** Draft. Breaking changes possible before 1.0.
 
-This document specifies the format of a TopoRank AgentCard (also called an Agent Discovery Card) — a JSON document an agent (or its provider) publishes to advertise its capabilities to discovery rankers, orchestrators, and other agents.
+This document specifies the format of a AgentFleetCheck AgentCard (also called an Agent Discovery Card) — a JSON document an agent (or its provider) publishes to advertise its capabilities to discovery rankers, orchestrators, and other agents.
 
-The spec is vendor-neutral and Apache 2.0 licensed. Reference consumers include TopoRank, but conformance to this spec does not require using any particular ranker.
+The spec is vendor-neutral and Apache 2.0 licensed. Reference consumers include AgentFleetCheck, but conformance to this spec does not require using any particular ranker.
 
 The key words "MUST," "MUST NOT," "REQUIRED," "SHALL," "SHALL NOT," "SHOULD," "SHOULD NOT," "RECOMMENDED," "MAY," and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://datatracker.ietf.org/doc/html/rfc2119).
 

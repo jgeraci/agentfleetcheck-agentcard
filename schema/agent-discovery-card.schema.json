@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/jgeraci/toporank-agentcard/schema/agent-discovery-card.schema.json",
-  "title": "TopoRank AgentCard (Agent Discovery Card)",
+  "$id": "https://github.com/jgeraci/agentfleetcheck-agentcard/schema/agent-discovery-card.schema.json",
+  "title": "AgentFleetCheck AgentCard (Agent Discovery Card)",
   "description": "An AI agent's self-description for discovery rankers, orchestrators, and other agents.",
   "type": "object",
   "additionalProperties": true,

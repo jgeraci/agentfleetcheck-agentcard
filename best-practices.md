@@ -58,7 +58,7 @@ Counterintuitive but very effective. If your agent is a **Python** REPL, declare
 ]
 ```
 
-Rankers that support negative signals (TopoRank does) will penalize agents whose anti-uses overlap with the live query. Even rankers that don't support negatives use these for surfacing context to the calling agent.
+Rankers that support negative signals (AgentFleetCheck does) will penalize agents whose anti-uses overlap with the live query. Even rankers that don't support negatives use these for surfacing context to the calling agent.
 
 ## The `description` field
 
